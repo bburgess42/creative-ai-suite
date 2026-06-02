@@ -1,0 +1,32 @@
+{
+  "name": "creative-ai-suite",
+  "version": "0.1.0",
+  "description": "A cost-aware, multi-provider toolkit for AI-assisted creative content production: LLM text generation, image/video/voice synthesis routing, and a durable job runner.",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "keywords": [
+    "ai",
+    "llm",
+    "gemini",
+    "generative-ai",
+    "cost-tracking",
+    "observability",
+    "content-generation",
+    "typescript"
+  ],
+  "author": "Brent Burgess",
+  "private": true,
+  "license": "SEE LICENSE IN LICENSE",
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0",
+    "vitest": "^2.1.8"
+  }
+}
