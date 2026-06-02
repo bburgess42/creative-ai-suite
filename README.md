@@ -17,6 +17,8 @@ Wiring an app to one AI API is easy. Running a *production* content pipeline acr
 
 The emphasis throughout is the unglamorous production stuff — **observability, cost control, failure handling, testability** — not just calling a model.
 
+There's also an **interactive demo UI** ([`web/`](web/)) — a React 19 + TypeScript app that drives the real toolkit functions in the browser (cost router, scorer, prompt builder) with zero config and no API keys. `cd web && npm install && npm run dev`.
+
 ## Architecture
 
 ```
@@ -105,6 +107,7 @@ src/
   jobs/      job-store.ts, spawn.ts
   index.ts
 tests/       vitest unit tests (one per module)
+web/         interactive demo UI (Vite + React 19), drives @toolkit live
 python/      generate_image.py, tts_narration.py, cost_tracker.py
 docs/        ARCHITECTURE.md
 ```
