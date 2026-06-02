@@ -19,6 +19,10 @@ The emphasis throughout is the unglamorous production stuff — **observability,
 
 There's also an **interactive demo UI** ([`web/`](web/)) — a React 19 + TypeScript app that drives the real toolkit functions in the browser (cost router, scorer, prompt builder) with zero config and no API keys. `cd web && npm install && npm run dev`.
 
+![Cost Router panel — choosing the cheapest animation backend that meets the constraints](web/screenshots/cost-router.png)
+
+> The Cost Router panel: move the constraints and `selectBackend()` picks the cheapest qualifying backend live. [More panels below.](#demo-ui)
+
 ## Architecture
 
 ```
@@ -95,6 +99,20 @@ const choice = selectBackend({
 - **Strict TypeScript** (`strict`, `noUnusedLocals`, `noUnusedParameters`) and pure-function cores keep the logic testable without mocking the network.
 
 See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for the ledger schema, the backend-selection algorithm, and the job lifecycle in detail.
+
+## Demo UI
+
+A zero-config React 19 + TypeScript app ([`web/`](web/)) whose panels call the
+real toolkit functions in the browser — no mocked data, no API keys. Run it with
+`cd web && npm install && npm run dev`.
+
+**Description Scorer** — live 0–100 grading with a per-criterion breakdown and suggestions:
+
+![Description Scorer panel](web/screenshots/description-scorer.png)
+
+**Prompt Preview** — see exactly what a prompt pack sends to the model:
+
+![Prompt Preview panel](web/screenshots/prompt-preview.png)
 
 ## Project layout
 

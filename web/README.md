@@ -20,11 +20,26 @@ No API keys needed: the panels exercise the toolkit's pure functions
 - **Cost Router** — move the duration/quality/loop/motion/budget controls and
   watch `selectBackend()` choose the cheapest qualifying backend live, with a
   per-backend cost table.
+
+  ![Cost Router](screenshots/cost-router.png)
+
 - **Description Scorer** — type a description and see `scoreDescription()` grade
   it 0–100 with a per-criterion breakdown and concrete suggestions; switch
   scoring profiles to retarget the rubric at a different niche.
+
+  ![Description Scorer](screenshots/description-scorer.png)
+
 - **Prompt Preview** — edit inputs and see the exact system + user prompt a
   prompt pack builds before it's sent to the model.
+
+  ![Prompt Preview](screenshots/prompt-preview.png)
+
+## Regenerating screenshots
+
+```bash
+npm run build && npm run preview -- --port 4173   # serve in one shell
+npm run screenshots                                # capture in another (needs: npx playwright install chromium)
+```
 
 ## Why Vite, not Next.js?
 
