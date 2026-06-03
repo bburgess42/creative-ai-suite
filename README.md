@@ -147,6 +147,7 @@ TypeScript, React, Node, and Python.
 Happy to walk through any part of the design.
 
 - **GitHub:** [@bburgess42](https://github.com/bburgess42)
+- **LinkedIn:** [brent-burgess](https://www.linkedin.com/in/brent-burgess-126984a/)
 - **Email:** burgess.brent@gmail.com
 
 ## License
