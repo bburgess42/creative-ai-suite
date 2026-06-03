@@ -2,8 +2,9 @@
 
 Reads/writes the SAME JSON file as the TypeScript cost-logger (see
 src/cost/cost-logger.ts), so a Python CLI script and a TypeScript service can
-record spend to one ledger without a database. The schema matches field-for-
-field.
+record spend to one ledger without a database. The ledger RECORD SHAPE matches
+field-for-field (same keys + types); the per-provider pricing tables below are
+the Python side only and are not shared with the TypeScript pricing module.
 
 Ledger location resolution order:
   1. COST_LEDGER_PATH env var
@@ -16,7 +17,8 @@ import os
 from datetime import datetime, timezone
 from pathlib import Path
 
-# Per-image USD rates, mirrored from src/cost/pricing.ts.
+# Per-unit USD rates, mirrored from src/cost/pricing.ts.
+# Imagen: per image. ElevenLabs: per character.
 PRICING = {
     "gemini": {
         "imagen-4.0-ultra-generate-001": 0.06,
@@ -25,6 +27,10 @@ PRICING = {
         "imagen-4.0-ultra": 0.06,
         "imagen-4.0-standard": 0.04,
         "imagen-4.0-fast": 0.02,
+    },
+    "elevenlabs": {
+        "eleven_multilingual_v2": 0.00022,
+        "eleven_v3": 0.00022,
     },
 }
 

@@ -89,6 +89,10 @@ export function spawnTrackedJob(store: JobStore, opts: SpawnOptions): SpawnedJob
   // Tee stdio to a log file. The caller can still attach its own data
   // listeners — Node streams support multiple consumers.
   const logStream = fs.createWriteStream(logPath, { flags: "a" });
+  // A log-file write error (EACCES/ENOSPC) emits 'error'; without a handler that
+  // becomes an unhandled exception and crashes the parent — exactly what the job
+  // runner is supposed to prevent. Swallow + report instead.
+  logStream.on("error", (e) => console.error(`[spawn] log stream error for ${opts.jobId}:`, e));
   logStream.write(
     `--- ${new Date().toISOString()} pid=${proc.pid} cmd=${path.basename(opts.command)} ${opts.args.join(" ")} ---\n`,
   );

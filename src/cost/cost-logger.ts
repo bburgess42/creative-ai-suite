@@ -3,9 +3,12 @@
  *
  * Every paid AI call in the suite routes through here so spend is observable
  * after the fact: which endpoint, which model, how many units, how much it
- * cost. The same file format is read/written by the Python CLI (see
- * python/cost_tracker.py), so a TypeScript service and a Python script can
- * share one ledger without a database.
+ * cost. The same JSON record shape (field names + types) is read/written by the
+ * Python CLI (see python/cost_tracker.py), so a TypeScript service and a Python
+ * script can share one ledger file without a database. The per-provider pricing
+ * tables are not shared across runtimes — only the ledger format. To share one
+ * file, point both runtimes at the same COST_LEDGER_PATH; the default below is
+ * relative to the current working directory.
  *
  * Writing directly from TypeScript (rather than shelling out to Python for
  * every sub-cent text call) avoids paying more in process-spawn overhead than
@@ -50,7 +53,14 @@ function saveLedger(entries: LedgerEntry[]): void {
   try {
     const p = ledgerPath();
     fs.mkdirSync(path.dirname(p), { recursive: true });
-    fs.writeFileSync(p, JSON.stringify(entries, null, 2));
+    // Write to a temp file then atomically rename into place. A crash mid-write
+    // can corrupt/truncate the temp file but never the live ledger, since rename
+    // is atomic on a single filesystem. (The read-modify-write below still
+    // assumes a single writer; for concurrent processes, set distinct
+    // COST_LEDGER_PATHs or front this with a queue.)
+    const tmp = `${p}.${process.pid}.tmp`;
+    fs.writeFileSync(tmp, JSON.stringify(entries, null, 2));
+    fs.renameSync(tmp, p);
   } catch (err) {
     // Cost logging must NEVER crash the calling request. Swallow + report.
     console.error("[cost-logger] failed to write ledger:", err);

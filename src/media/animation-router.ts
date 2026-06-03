@@ -47,6 +47,10 @@ export const BACKENDS: Record<AnimationBackend, BackendSpec> = {
     supportsLoop: true,
     generativeMotion: true,
   },
+  // The cheap fallback: depth-based parallax, not true generative motion. It
+  // qualifies for almost any request, so it will be selected by default unless
+  // the caller sets `needsGenerativeMotion: true`. Set that flag whenever you
+  // actually want the subject to move rather than just pan over a depth map.
   immersity: {
     backend: "immersity",
     label: "Immersity (depth parallax)",
@@ -125,7 +129,8 @@ export function selectBackend(
       continue;
     }
 
-    // Use the lowest quality that still meets the floor — cheapest that qualifies.
+    // Price at the requested quality floor (the cheapest tier that satisfies
+    // minQuality); we never pay for more quality than was asked for.
     const quality = minQuality;
     const estimatedCost = estimateCost(spec.backend, req.durationSec, quality);
     if (req.maxBudget !== undefined && estimatedCost > req.maxBudget) {

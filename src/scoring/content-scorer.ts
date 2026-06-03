@@ -93,8 +93,8 @@ export function scoreDescription(description: string, profile: ScoringProfile): 
     suggestions.push("Add timestamps for chapters (boosts retention + SEO).");
   }
 
-  // 4. Hashtags (0-10): 3-5 is ideal.
-  const hashtagCount = (description.match(/#\w+/g) || []).length;
+  // 4. Hashtags (0-10): 3-5 is ideal. Unicode-aware so non-ASCII tags count.
+  const hashtagCount = (description.match(/#[\p{L}\p{N}_]+/gu) || []).length;
   let hashtags: number;
   if (hashtagCount >= 3 && hashtagCount <= 5) {
     hashtags = 10;

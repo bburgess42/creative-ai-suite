@@ -60,6 +60,16 @@ def generate(label: str, text: str, voice_id: str, api_key: str, force: bool) ->
         sys.exit(1)
     out.write_bytes(r.content)
     print(f"[ok  ] wrote {out} ({len(r.content)} bytes)")
+
+    # Log spend to the shared ledger (best-effort; never fail the generation).
+    try:
+        from cost_tracker import PRICING, log_cost
+
+        cost_per = PRICING["elevenlabs"].get(model_id, 0.00022)
+        total = log_cost("elevenlabs", model_id, len(text), cost_per, label)
+        print(f"[cost] {label}: ${total:.4f}")
+    except Exception:
+        pass
     return out
 
 

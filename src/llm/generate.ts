@@ -46,7 +46,9 @@ export function parseStringList(response: string, opts: ParseListOptions = {}): 
 
   const lines = response
     .split("\n")
-    .map((l) => l.trim().replace(/^[-*\d.)\s]+/, ""));
+    // Strip only real list markers ("- ", "* ", "1. ", "2) ") — not leading
+    // digits that are part of the content (e.g. "2024.5 release notes").
+    .map((l) => l.trim().replace(/^\s*(?:[-*•]|\d+[.)])\s+/, ""));
   return clean(lines);
 }
 
@@ -57,13 +59,14 @@ export function parseStringList(response: string, opts: ParseListOptions = {}): 
 export async function generateList(
   pack: PromptPack,
   vars: PromptVars,
-  opts: ParseListOptions & Pick<GeminiCallOptions, "project" | "temperature"> = {},
+  opts: ParseListOptions & Pick<GeminiCallOptions, "project" | "temperature" | "model"> = {},
 ): Promise<string[]> {
   const userPrompt = pack.buildUserPrompt(vars);
   const response = await callGemini(pack.system, userPrompt, {
     endpoint: `${pack.id}.generate`,
     project: opts.project,
     temperature: opts.temperature,
+    model: opts.model,
   });
   return parseStringList(response, opts);
 }

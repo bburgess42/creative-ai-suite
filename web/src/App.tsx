@@ -29,12 +29,15 @@ export function App() {
         </p>
       </header>
 
-      <nav className="tabs" role="tablist">
+      <nav className="tabs" role="tablist" aria-label="Demo panels">
         {TABS.map((t) => (
           <button
             key={t.id}
+            id={`tab-${t.id}`}
             role="tab"
             aria-selected={t.id === tab}
+            aria-controls="panel"
+            tabIndex={t.id === tab ? 0 : -1}
             className={t.id === tab ? "tab active" : "tab"}
             onClick={() => setTab(t.id)}
           >
@@ -45,7 +48,7 @@ export function App() {
 
       <p className="panel-blurb">{active.blurb}</p>
 
-      <main className="panel">
+      <main className="panel" id="panel" role="tabpanel" aria-labelledby={`tab-${tab}`}>
         {tab === "router" && <CostRouterExplorer />}
         {tab === "scorer" && <DescriptionScorer />}
         {tab === "prompt" && <PromptPreview />}

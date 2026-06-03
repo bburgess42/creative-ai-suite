@@ -62,7 +62,13 @@ export function DescriptionScorer() {
             ))}
           </select>
         </label>
-        <textarea value={text} onChange={(e) => setText(e.target.value)} rows={18} spellCheck={false} />
+        <textarea
+          aria-label="Description to score"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          rows={18}
+          spellCheck={false}
+        />
         <div className="muted">{text.length} characters</div>
       </section>
 

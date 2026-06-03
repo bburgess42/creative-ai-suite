@@ -34,7 +34,10 @@ export function PromptPreview() {
             min={1}
             max={20}
             value={count}
-            onChange={(e) => setCount(Number(e.target.value))}
+            onChange={(e) => {
+              const n = Number(e.target.value);
+              setCount(Number.isFinite(n) ? Math.min(20, Math.max(1, Math.floor(n))) : 1);
+            }}
           />
         </label>
         <label className="stack">

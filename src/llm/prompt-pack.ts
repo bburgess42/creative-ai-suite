@@ -31,7 +31,8 @@ export const titleIdeasPack: PromptPack = {
   ].join(" "),
   buildUserPrompt: (vars) => {
     const topic = String(vars.topic ?? "");
-    const count = Number(vars.count ?? 6);
+    const parsedCount = Number(vars.count);
+    const count = Number.isFinite(parsedCount) && parsedCount > 0 ? Math.floor(parsedCount) : 6;
     const keywords = Array.isArray(vars.keywords) ? vars.keywords.join(", ") : "";
     const lines = [
       `Generate ${count} title ideas for: "${topic}".`,
