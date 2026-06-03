@@ -29,11 +29,26 @@ const page = await browser.newPage({
   deviceScaleFactor: 2, // crisp, retina-quality output
 });
 
-await page.goto(BASE, { waitUntil: "networkidle" });
+try {
+  await page.goto(BASE, { waitUntil: "load" });
+} catch {
+  console.error(
+    `Could not reach ${BASE}. Start the app first:\n  npm run build && npm run preview -- --port 4173`,
+  );
+  await browser.close();
+  process.exit(1);
+}
+
+// Wait for the app to render rather than sleeping a fixed amount.
+await page.getByRole("tab", { name: PANELS[0].tab }).waitFor();
 
 for (const panel of PANELS) {
-  await page.getByRole("tab", { name: panel.tab }).click();
-  await page.waitForTimeout(250); // let bars/transitions settle
+  const tab = page.getByRole("tab", { name: panel.tab });
+  await tab.click();
+  await page.waitForFunction(
+    (label) => document.querySelector('[role="tab"][aria-selected="true"]')?.textContent === label,
+    panel.tab,
+  );
   const out = path.join(outDir, panel.file);
   await page.locator(".app").screenshot({ path: out });
   console.log(`captured ${panel.file}`);
