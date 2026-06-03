@@ -1,5 +1,7 @@
 # creative-ai-suite
 
+[![CI](https://github.com/bburgess42/creative-ai-suite/actions/workflows/ci.yml/badge.svg)](https://github.com/bburgess42/creative-ai-suite/actions/workflows/ci.yml)
+
 A cost-aware, multi-provider toolkit for **AI-assisted creative content production** — text, image, video, and voice — with first-class spend observability and a durable job runner.
 
 > **Code sample / portfolio.** This repository is a sanitized extract of the AI engineering layer from a production content-automation system I built and run. It is published for evaluation only — see [License](#license).
@@ -55,19 +57,26 @@ There's also an **interactive demo UI** ([`web/`](web/)) — a React 19 + TypeSc
 | `src/media/` | Cost-aware animation backend selection | Declarative constraints (duration, quality floor, loop, generative motion, budget) → cheapest qualifying backend, with per-backend rejection reasons |
 | `src/scoring/` | Heuristic SEO/quality scorer for descriptions | 100-point rubric; niche vocabulary lifted into an injectable `ScoringProfile` |
 | `src/jobs/` | Durable job store + detached process spawner | `queued → running → complete/error` state machine; orphan sweep; processes survive dev-server reloads |
-| `python/` | CLI counterparts (Imagen generation, ElevenLabs TTS) | Share the TypeScript cost ledger byte-for-byte |
+| `python/` | CLI counterparts (Imagen generation, ElevenLabs TTS) | Both log spend to the same ledger format the TypeScript side uses |
 
 ## Quick start
 
 ```bash
 npm install
-npm test          # vitest — unit tests for pricing, ledger, router, scorer, jobs, parsing
+npm test          # vitest — 29 unit tests (pricing, ledger, router, scorer, jobs, parsing)
 npm run typecheck # tsc --noEmit, strict mode
+npm run build     # emit dist/ (JS + .d.ts) — what the import examples below resolve to
 ```
+
+The Python ledger has its own tests: `cd python && python -m unittest discover -p "test_*.py"`.
 
 To run anything that hits a real API, copy `.env.example` to `.env` and fill in your keys.
 
 ### Using it
+
+After `npm run build`, the package resolves by name via its `exports` map (it's
+`private`, so the name is illustrative rather than published — link it or import
+from `./dist`). The tests and demo UI import straight from source instead.
 
 ```ts
 import { generateList, titleIdeasPack } from "creative-ai-suite";

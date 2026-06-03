@@ -37,10 +37,16 @@ A single append-only JSON file. Each entry:
   prefix match instead of date parsing — the file is the query engine.
 - **Writes never throw.** `saveLedger` catches and logs. The worst failure mode
   is a missing ledger line, never a failed user request.
+- **Writes are atomic.** Each save writes a temp file then `rename`s it into
+  place, so a crash mid-write can't truncate the live ledger (rename is atomic on
+  one filesystem). The read-modify-write still assumes a single writer; concurrent
+  processes should use distinct `COST_LEDGER_PATH`s or a queue.
 - **Two runtimes, one file.** `python/cost_tracker.py` writes the identical
-  schema, so a Python CLI render and a TypeScript API call land in the same
-  ledger. The location is resolved the same way in both (`COST_LEDGER_PATH`,
-  else `./data/api-costs.json`).
+  record shape, so a Python CLI render and a TypeScript API call can land in the
+  same ledger. Both resolve the path the same way (`COST_LEDGER_PATH`, else
+  `./data/api-costs.json`) — note that default is **relative to the working
+  directory**, so set `COST_LEDGER_PATH` explicitly to guarantee both runtimes
+  hit one file. The pricing tables are per-runtime; only the ledger format is shared.
 
 ### Tradeoffs
 A JSON file is fine into the low tens of thousands of entries (the real

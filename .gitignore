@@ -11,8 +11,12 @@ dist/
 *_token.json
 *_secret.json
 
-# Cost ledger (runtime data)
+# Cost ledger (runtime data) + atomic-write temp files
 data/*.json
+*.tmp
+
+# Generated media output (Python CLIs)
+out/
 
 # Python
 .venv/

@@ -20,4 +20,9 @@ describe("parseStringList", () => {
     const resp = '["ok", "x", "also fine"]';
     expect(parseStringList(resp, { minLength: 2, limit: 1 })).toEqual(["ok"]);
   });
+
+  it("strips real list markers but preserves content-leading digits", () => {
+    const resp = "1. First\n2) Second\n- Third\n3.5 inch drive review";
+    expect(parseStringList(resp)).toEqual(["First", "Second", "Third", "3.5 inch drive review"]);
+  });
 });
