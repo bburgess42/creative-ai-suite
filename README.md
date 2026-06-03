@@ -130,6 +130,25 @@ python/      generate_image.py, tts_narration.py, cost_tracker.py
 docs/        ARCHITECTURE.md
 ```
 
+## About
+
+I'm **Brent Burgess** — I build AI-assisted production systems end to end, from
+the model-integration and cost/observability layer up through the React UI that
+drives it.
+
+This repository is a sanitized slice of a content-automation platform I designed,
+built, and **operate solo in production**. It orchestrates several generative-AI
+providers (text, image, video, voice) behind one cost-aware, observable layer,
+with a durable job runner and a React front end. I extracted the parts that best
+show how I approach real systems — attributable spend, provider tradeoffs,
+failure handling, and testable code — rather than a from-scratch toy. Built with
+TypeScript, React, Node, and Python.
+
+Happy to walk through any part of the design.
+
+- **GitHub:** [@bburgess42](https://github.com/bburgess42)
+- **Email:** burgess.brent@gmail.com
+
 ## License
 
 Copyright © 2026 Brent Burgess. **All rights reserved.** Published publicly as a
