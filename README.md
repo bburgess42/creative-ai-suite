@@ -27,25 +27,38 @@ There's also an **interactive demo UI** ([`web/`](web/)) — a React 19 + TypeSc
 
 ## Architecture
 
-```
-                      ┌────────────────────────────────────────────┐
-                      │                  src/                       │
-                      ├────────────────────────────────────────────┤
-  text features  ───▶ │  llm/      gemini client + prompt packs     │
-                      │            + generic list-generation runner │──┐
-  media features ───▶ │  media/    cost-aware animation router      │  │
-                      │  scoring/  config-driven description scorer │  │
-  long jobs      ───▶ │  jobs/     durable job store + detached     │  │
-                      │            process spawner                  │  │
-                      └────────────────────────────────────────────┘  │
-                                          │  every paid call           │
-                                          ▼                            │
-                      ┌────────────────────────────────────────────┐  │
-                      │  cost/  pricing tables + shared JSON ledger │◀─┘
-                      └────────────────────────────────────────────┘
-                                          ▲
-                      python/  CLI scripts (image gen, TTS) write to the
-                               SAME ledger — one source of truth, two runtimes
+Every feature talks to a model through a thin module, and **every paid call —
+from either runtime — lands in one shared ledger.** That single chokepoint is
+what makes spend attributable.
+
+```mermaid
+flowchart LR
+    T["Text<br/>features"]
+    M["Media<br/>features"]
+    J["Long-running<br/>jobs"]
+
+    subgraph core["src/ &nbsp;— AI engineering layer"]
+        direction TB
+        LLM["llm/<br/><i>Gemini client · prompt packs<br/>· list-generation runner</i>"]
+        MEDIA["media/<br/><i>cost-aware animation router</i>"]
+        SCORE["scoring/<br/><i>config-driven scorer</i>"]
+        JOBS["jobs/<br/><i>durable store · detached spawner</i>"]
+    end
+
+    PY["python/<br/><i>CLI scripts — image gen, TTS</i>"]
+    LEDGER[("cost/<br/>pricing tables<br/>+ shared JSON ledger")]
+
+    T --> LLM
+    M --> MEDIA
+    M --> SCORE
+    J --> JOBS
+
+    LLM   -- every paid call --> LEDGER
+    MEDIA -- every paid call --> LEDGER
+    PY    -- same ledger format --> LEDGER
+
+    classDef store fill:#1f6feb,stroke:#1158c7,color:#fff;
+    class LEDGER store;
 ```
 
 ### Modules

@@ -72,6 +72,24 @@ Survivors are sorted by cost ascending; the cheapest wins. On total failure the
 result carries a `considered[]` list with a per-backend reason — so the caller
 can surface "increase budget to $0.50" instead of a silent null.
 
+```mermaid
+flowchart TD
+    Start(["selectBackend(constraints)"]) --> Q1{"quality ≥ floor?"}
+    Q1 -- no --> Reject[/"reject: record reason"/]
+    Q1 -- yes --> Q2{"duration ≤ max?"}
+    Q2 -- no --> Reject
+    Q2 -- yes --> Q3{"native loop, if required?"}
+    Q3 -- no --> Reject
+    Q3 -- yes --> Q4{"generative motion, if required?"}
+    Q4 -- no --> Reject
+    Q4 -- yes --> Q5{"cost at floor ≤ budget?"}
+    Q5 -- no --> Reject
+    Q5 -- yes --> Keep["cost at quality floor"]
+    Keep --> Sort{{"sort survivors by cost asc"}}
+    Sort --> Win(["cheapest qualifying backend"])
+    Reject --> Fail(["no backend → considered[] with reasons"])
+```
+
 ### Why a quality floor, not a target
 You almost never want to *pay for* more quality than you asked for. Costing each
 candidate at the minimum acceptable quality makes the cheapest-wins sort
@@ -80,10 +98,16 @@ correct by construction.
 ## 3. Job runner (`src/jobs/`)
 
 ### State machine
-```
-create() ──▶ queued ──markRunning()──▶ running ──▶ complete   (markComplete)
-                │                          │
-                └──────────────────────────┴────▶ error       (markError)
+```mermaid
+stateDiagram-v2
+    [*] --> queued: create()
+    queued --> running: markRunning()
+    running --> complete: markComplete()
+    running --> error: markError()
+    queued --> error: sweepOrphans() at boot
+    running --> error: sweepOrphans() at boot
+    complete --> [*]
+    error --> [*]
 ```
 `complete` and `error` are terminal: a late callback can't resurrect a finished
 job. This matters because two things race to finish a job — the child process's
